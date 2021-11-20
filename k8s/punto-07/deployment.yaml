@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deploy
+  namespace: name2
+  labels:
+    app: api-deploy
+spec:
+  selector: #permite seleccionar un conjunto de objetos que cumplan las condiciones
+    matchLabels:
+      app: api-deploy
+  replicas: 4
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  # revisionHistoryLimit: 5 # cantidad de rs que guarda como historial
+  template: # Plantilla que define los containers
+    metadata:
+      labels:
+        app: api-deploy
+    spec:
+      containers:
+        - name: api-persona
+          image: efajardolopez/api-persona
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: secret
+        - name: api-preferencia
+          image: efajardolopez/api-preferencia
+          ports:
+            - containerPort: 8081
+          envFrom:
+            - secretRef:
+                name: secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: balancer
+  namespace: name2
+spec:
+  type: LoadBalancer
+  selector:
+    app: api-deploy
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080

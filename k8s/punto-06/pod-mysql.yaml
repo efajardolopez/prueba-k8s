@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bd-pod
+  namespace: name1
+  labels:
+    app: bd-pod
+    version: v1
+spec:
+  containers:
+    - name: bd-server
+      image: efajardolopez/bd-server
+      ports:
+        - containerPort: 3306
+  restartPolicy: OnFailure
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bd-svc
+  namespace: name1
+spec:
+  type: ClusterIP
+  selector:
+    app: bd-pod
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+#bd-svc.app.svc.cluster.local

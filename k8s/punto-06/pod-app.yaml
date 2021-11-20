@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-pod
+  namespace: name1
+  labels:
+    app: app-pod
+    project: api-persona
+spec:
+  containers:
+    - name: api-persona
+      image: efajardolopez/api-persona
+      ports:
+        - containerPort: 8080
+      envFrom:
+        - configMapRef:
+            name: configmap-bd
+    - name: api-preferencia
+      image: efajardolopez/api-preferencia
+      ports:
+        - containerPort: 8081
+      envFrom:
+        - configMapRef:
+            name: configmap-bd
+  restartPolicy: OnFailure
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-svc
+  namespace: name1
+spec:
+  type: ClusterIP
+  selector:
+    app: app-pod
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080

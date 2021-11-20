@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configmap-bd
+  namespace: name1
+  labels:
+    app: bd
+data:
+  host: "bd-svc"
+  port: "3306"

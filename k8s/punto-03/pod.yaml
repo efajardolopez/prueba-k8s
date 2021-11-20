@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: curso
+  labels:
+    app: curso
+    version: v1
+spec:
+  containers:
+    - name: bd-server
+      image: efajardolopez/bd-server
+      ports:
+        - containerPort: 3306
+    - name: api-persona
+      image: efajardolopez/api-persona
+      ports:
+        - containerPort: 8080:8080
+      env:
+        - name: host
+          value: localhost
+        - name: port
+          value: "3306"
+    - name: api-preferencia
+      image: efajardolopez/api-preferencia
+      ports:
+        - containerPort: 8081:8081
+      env:
+        - name: host
+          value: localhost
+        - name: port
+          value: "3306"
+  restartPolicy: OnFailure #valores posibles -> Always, OnFailure, Never
